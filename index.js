@@ -16,15 +16,15 @@ const server = require('./server');
 
 class ServerApp {
 
-  constructor (){
+  constructor() {
     this.app = express();
     const env = process.env.NODE_ENV || 'production';
-    if(env === 'development') {
+    if (env === 'development') {
       this.development();
     } else {
       this.production();
     }
-    this.listen(env === 'development' ? 8080 : 80);
+    this.listen(env === 'development' ? 8080 : 8080);
   }
 
   development() {
@@ -42,34 +42,51 @@ class ServerApp {
 
     const watcher = chokidar.watch('./server');
 
-    // Listen changes to clean node's cache
-    watcher.on('ready', function() {
-      watcher.on('all', function() {
+    // Clean server app modules
+    watcher.on('ready', function () {
+      watcher.on('all', function () {
         console.log("Clearing /server/ module cache from server");
-        Object.keys(require.cache).forEach(function(id) {
+        Object.keys(require.cache).forEach(function (id) {
           if (/[\/\\]server[\/\\]/.test(id)) delete require.cache[id];
         });
       });
     });
 
     // Clean React App modules
-    compiler.plugin('done', function() {
+    compiler.plugin('done', function () {
       console.log("Clearing /client/ module cache from server");
-      Object.keys(require.cache).forEach(function(id) {
-        if (/[\/\\]app[\/\\]/.test(id)) delete require.cache[id];
+      Object.keys(require.cache).forEach(function (id) {
+        if (/[\/\\]app[\/\\]/.test(id) || /[\/\\]server[\/\\]/.test(id)) delete require.cache[id];
       });
     });
   }
 
   production() {
-    const staticsMapping = require('./build/manifest.json');
+    const staticsMapping = require('./build/stats.json');
+    this.app.use(this.mapProdStatics(staticsMapping));
     this.app.use(server);
   }
 
-  mapDevStatics(req, res, next){
-    // entrypoints match dependency order better than assetsByChunkName
-    console.log(res.locals.webpackStats.toJson().entrypoints);
+  mapDevStatics(req, res, next) {
+    //filters vendor bundle returns an array with ordered js files per entrypoint
+    const bundles = res.locals.webpackStats.toJson().entrypoints;
+    res.staticsFiles = Object.keys(bundles).reduce((acc, i) => {
+      i !== 'vendor' ? acc[i] = bundles[i].assets : null;
+      return acc;
+    }, {});
     next();
+  }
+
+  mapProdStatics(statics) {
+    return (req, res, next) => {
+      const bundles = statics.entrypoints;
+      res.staticFiles = Object.keys(bundles).reduce((acc, i) => {
+        i !== 'vendor' ? acc[i] = bundles[i].assets : null;
+        return acc;
+      }, {});
+      res.assetsByChunkName = statics.assetsByChunkName;
+      next();
+    };
   }
 
   listen(port) {

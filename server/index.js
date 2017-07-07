@@ -7,6 +7,7 @@ const App = require('../app');
 
 router.get('*', (req, res) => {
   const context = {};
+  console.log(res.staticFiles, res.assetsByChunkName)
   const html = ReactDOMServer.renderToString(
     <StaticRouter
       location={req.url}

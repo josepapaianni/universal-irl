@@ -1,9 +1,9 @@
 const { name } = require('../package.json');
 const { resolve } = require('path');
+const fs = require('fs');
 const webpack = require('webpack');
 
 module.exports = {
-  devtool: 'cheap-module-eval-source-map',
   entry: {
     vendor: [
       'react', 'react-dom', 'react-router-dom', 'redux', 'react-redux', 'redux-thunk'
@@ -32,21 +32,33 @@ module.exports = {
     ]
   },
   output: {
-    path: resolve() + '/public/',
-    filename: '[name].js',
+    path: resolve() + '/build/',
+    filename: '[name].[chunkhash].js',
     publicPath: '/'
   },
 
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify('development'),
+        NODE_ENV: JSON.stringify('production'),
         BROWSER: true,
       }
     }),
-    new webpack.HotModuleReplacementPlugin(),
+    new webpack.optimize.ModuleConcatenationPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      sourceMap: true,
+      compress: {
+        warnings: false,
+      },
+    }),
     new webpack.optimize.CommonsChunkPlugin({
       name: ['vendor', 'manifest']
-    })
+    }),
+    function getBuildStats() {
+      this.plugin('done', (stats) => {
+        const assets = JSON.stringify({assetsByChunkName: stats.toJson().assetsByChunkName, entrypoints: stats.toJson().entrypoints});
+        fs.writeFileSync(`${resolve()}/build/stats.json`, assets)
+      });
+    },
   ]
 };
