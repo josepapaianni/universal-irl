@@ -63,6 +63,7 @@ class ServerApp {
 
   production() {
     const staticsMapping = require('./build/stats.json');
+    this.app.use(express.static('./build'));
     this.app.use(this.mapProdStatics(staticsMapping));
     this.app.use(server);
   }

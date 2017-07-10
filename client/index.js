@@ -4,7 +4,6 @@ const { AppContainer } = require('react-hot-loader');
 const { BrowserRouter } = require('react-router-dom');
 const App = require('../app');
 
-
 ReactDOM.render(
   <AppContainer>
     <BrowserRouter>

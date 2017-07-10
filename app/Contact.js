@@ -5,7 +5,7 @@ class Contact extends React.Component {
   render() {
     return (
       <div>
-        <h3>soy contaasasdasdasdasdasdaspdjadact</h3>
+        <h3>soy contact</h3>
         <ul>
           <li><Link to="/contact/me">Me</Link></li>
         </ul>

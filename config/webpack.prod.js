@@ -6,12 +6,9 @@ const webpack = require('webpack');
 module.exports = {
   entry: {
     vendor: [
-      'react', 'react-dom', 'react-router-dom', 'redux', 'react-redux', 'redux-thunk'
+      'react', 'react-dom', 'react-router-dom', 'redux', 'react-redux', 'redux-thunk', 'react-hot-loader'
     ],
     app: [
-      'react-hot-loader/patch',
-      'webpack-hot-middleware/client?path=http://localhost:8080/__webpack_hmr&overlay=false',
-      'webpack/hot/only-dev-server',
       './client/index.js'
     ],
   },
@@ -33,7 +30,7 @@ module.exports = {
   },
   output: {
     path: resolve() + '/build/',
-    filename: '[name].[chunkhash].js',
+    filename: '[name].js',
     publicPath: '/'
   },
 

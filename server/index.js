@@ -7,7 +7,7 @@ const App = require('../app');
 
 router.get('*', (req, res) => {
   const context = {};
-  console.log(res.staticFiles, res.assetsByChunkName)
+  // console.log(res.staticFiles, res.assetsByChunkName)
   const html = ReactDOMServer.renderToString(
     <StaticRouter
       location={req.url}
@@ -22,6 +22,7 @@ router.get('*', (req, res) => {
       <div id="root">${html}</div>
       <script src='/manifest.js'></script>
       <script src='/vendor.js'></script>
+      <script src='/2.js'></script>
       <script src='/app.js'></script>
     `);
 

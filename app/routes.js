@@ -9,8 +9,11 @@ const isBrowser = typeof window !== 'undefined';
 if (process.env.BROWSER) {
   Home = () => new Promise(resolve => require.ensure([], require => resolve(require('./Home')), null, 'home'));
   About = () => new Promise(resolve => require.ensure([], require => resolve(require('./About')), null, 'about'));
-  Contact = () => new Promise(resolve => require.ensure([], require => resolve(require('./Contact')), null, 'contact'));
+  Contact = () => __webpack_modules__[require.resolveWeak('./Contact')] ?
+    new Promise(resolve => require.ensure([], require => resolve(require('./Contact')), null, 'contact')) :
+    __webpack_modules__[require.resolveWeak('./Contact')]
   Me = () => new Promise(resolve => require.ensure([], require => resolve(require('./Me')), null, 'me'));
+
 } else {
   Home = () => require('./Home');
   About = () => require('./About');
@@ -43,5 +46,3 @@ const routes = [
 ];
 
 module.exports = routes;
-
-
