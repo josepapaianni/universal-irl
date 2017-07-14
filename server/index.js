@@ -22,7 +22,7 @@ router.get('*', (req, res) => {
       <div id="root">${html}</div>
       <script src='/manifest.js'></script>
       <script src='/vendor.js'></script>
-      <script src='/2.js'></script>
+      <script src='/0.js'></script>
       <script src='/app.js'></script>
     `);
 
