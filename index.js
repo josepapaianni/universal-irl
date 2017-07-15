@@ -93,12 +93,11 @@ class ServerApp {
 
     mapProdStatics(statics) {
         return (req, res, next) => {
-            const bundles = statics.entrypoints;
-            res.staticFiles = Object.keys(bundles).reduce((acc, i) => {
-                i !== 'vendor' ? acc[i] = bundles[i].assets : null;
+            const bundles = statics.assetsByChunkName;
+            res.staticAssets = Object.keys(bundles).reduce((acc, i) => {
+                acc[i] = Array.isArray(bundles[i]) ? bundles[i] : [bundles[i]];
                 return acc;
             }, {});
-            res.assetsByChunkName = statics.assetsByChunkName;
             next();
         };
     }
