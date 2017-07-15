@@ -40,7 +40,11 @@ class ServerApp {
         }));
 
         this.httpApp.use(webpackHotMiddleware(compiler));
-        this.httpApp.use(this.mapDevStatics);
+        this.httpApp.use((req, res, next) => {
+            const bundles = res.locals.webpackStats.toJson().assetsByChunkName;
+            res.staticAssets = this.normalizeAssets(bundles);
+            next();
+        });
         this.httpApp.use((req, res, next) => require('./server')(req, res, next));
 
         const watcher = chokidar.watch('./server');
@@ -73,34 +77,25 @@ class ServerApp {
             key: fs.readFileSync('./config/ssl/server.key', 'utf8'),
             cert: fs.readFileSync('./config/ssl/server.crt', 'utf8')
         };
-        const staticsMapping = require('./build/stats.json');
         this.httpsApp.use(express.static('./build'));
-        this.httpsApp.use(this.mapProdStatics(staticsMapping));
+        const staticsMapping = this.normalizeAssets(require('./build/stats.json').assetsByChunkName);
+        this.httpsApp.use((req, res, next) => {
+            res.staticAssets = staticsMapping;
+            next();
+        });
         this.httpsApp.use(server);
 
         this.httpServer = http.createServer(this.httpApp);
         this.httpsServer = https.createServer(credentials, this.httpsApp);
     }
 
-    mapDevStatics(req, res, next) {
-        const bundles = res.locals.webpackStats.toJson().assetsByChunkName;
-        res.staticAssets = Object.keys(bundles).reduce((acc, i) => {
-            acc[i] = Array.isArray(bundles[i]) ? bundles[i] : [bundles[i]];
+    normalizeAssets(assets){
+        return Object.keys(assets).reduce((acc, i) => {
+            acc[i] = Array.isArray(assets[i]) ? assets[i] : [assets[i]];
             return acc;
         }, {});
-        next();
     }
 
-    mapProdStatics(statics) {
-        return (req, res, next) => {
-            const bundles = statics.assetsByChunkName;
-            res.staticAssets = Object.keys(bundles).reduce((acc, i) => {
-                acc[i] = Array.isArray(bundles[i]) ? bundles[i] : [bundles[i]];
-                return acc;
-            }, {});
-            next();
-        };
-    }
 
     listen() {
         this.httpServer.listen(8080, () => console.log(`listening @${8080}`));
