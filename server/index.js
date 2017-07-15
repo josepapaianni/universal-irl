@@ -1,34 +1,7 @@
 const express = require('express');
-const React = require('react');
-const ReactDOMServer = require('react-dom/server');
-const { StaticRouter } = require('react-router');
 const router = express.Router();
-const App = require('../app');
+const universalRender = require('./universal-render');
 
-router.get('*', (req, res) => {
-  const context = {};
-  // console.log(res.staticFiles, res.assetsByChunkName)
-  const html = ReactDOMServer.renderToString(
-    <StaticRouter
-      location={req.url}
-      context={context}
-    >
-      <App/>
-    </StaticRouter>
-  );
-
-  res.write(`
-      <!doctype html>
-      <div id="root">${html}</div>
-      <script src='/manifest.js'></script>
-      <script src='/vendor.js'></script>
-      <script src='/0.js'></script>
-      <script src='/app.js'></script>
-    `);
-
-  res.end();
-
-});
-
+router.get('*', universalRender);
 
 module.exports = router;

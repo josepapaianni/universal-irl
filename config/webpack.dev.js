@@ -5,14 +5,14 @@ const webpack = require('webpack');
 module.exports = {
   devtool: 'cheap-module-eval-source-map',
   entry: {
-    vendor: [
-      'react', 'react-dom', 'react-router-dom', 'redux', 'react-redux', 'redux-thunk'
-    ],
     app: [
       'react-hot-loader/patch',
       'webpack-hot-middleware/client?path=http://localhost:8080/__webpack_hmr&overlay=false',
       'webpack/hot/only-dev-server',
       './client/index.js'
+    ],
+    vendor: [
+        'react', 'react-dom', 'react-router-dom', 'redux', 'react-redux', 'redux-thunk'
     ],
   },
   module: {
@@ -46,7 +46,14 @@ module.exports = {
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
-      name: ['vendor', 'manifest']
-    })
+        name: "vendor",
+        minChunks: function(module){
+            return module.context && module.context.indexOf("node_modules") !== -1;
+        }
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+        name: "manifest",
+        minChunks: Infinity
+    }),
   ]
 };
