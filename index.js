@@ -43,6 +43,7 @@ class ServerApp {
         this.httpApp.use((req, res, next) => {
             const bundles = res.locals.webpackStats.toJson().assetsByChunkName;
             res.staticAssets = this.normalizeAssets(bundles);
+            res.staticPath = webpackConfig.output.publicPath;
             next();
         });
         this.httpApp.use((req, res, next) => require('./server')(req, res, next));
@@ -81,6 +82,7 @@ class ServerApp {
         const staticsMapping = this.normalizeAssets(require('./build/stats.json').assetsByChunkName);
         this.httpsApp.use((req, res, next) => {
             res.staticAssets = staticsMapping;
+            res.staticPath = webpackConfig.output.publicPath;
             next();
         });
         this.httpsApp.use(server);
