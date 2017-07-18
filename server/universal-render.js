@@ -1,10 +1,13 @@
 const express = require('express');
 const React = require('react');
+const { createStore, compose, applyMiddleware } = require('redux');
+const { Provider } = require('react-redux');
 const routes = require('../app/routes');
 const ReactDOMServer = require('react-dom/server');
 const {StaticRouter, matchPath} = require('react-router');
 const router = express.Router();
 const App = require('../app');
+const reducers = require('../app/reducers');
 
 // This function matches the request url with
 // routes config to know if we need to search
@@ -67,19 +70,26 @@ router.get('*', (req, res) => {
   const requestChunks = getPossibleChunks(req.url);
   const asyncTasks = getAsyncTasks(req.url);
   const scripts = getScripts(requestChunks, res.staticAssets).map(src => res.staticPath + src);
+  const store = createStore(reducers, []);
 
   const app = ReactDOMServer.renderToString(
-    <StaticRouter location={req.url} context={context}>
-      <App/>
-    </StaticRouter>
+    <Provider store={store}>
+      <StaticRouter location={req.url} context={context}>
+        <App/>
+      </StaticRouter>
+    </Provider>
   );
+
+  const preloadedState = store.getState();
 
   // A small script to load scripts after DOM content load (maximize ssr speed)
   //  @param scripts {array}
   const scriptTags = scripts.length > 0 ? `<script>window.addEventListener('load',function(){var s="${scripts}";if (s==='null'||s==='undefined')return;s=s.split(',');s.forEach(function(c){var t=document.createElement('script');t.src=c;t.async=false;t.defer=true;document.head.appendChild(t);})})</script>` : '';
   res.write(`
       <!doctype html>
-      <head><link rel="shortcut icon" href="https://http2.mlstatic.com/ui/navigation/1.6.11/mercadolibre/favicon.ico">${scriptTags}</head>
+      <head>
+        <script>window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '\\u003c')}</script>
+        <link rel="shortcut icon" href="https://http2.mlstatic.com/ui/navigation/1.6.11/mercadolibre/favicon.ico">${scriptTags}</head>
       <body>
         <main id="root">${app}</main>
       </body>`

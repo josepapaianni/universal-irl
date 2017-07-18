@@ -2,13 +2,17 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const { AppContainer } = require('react-hot-loader');
 const { BrowserRouter } = require('react-router-dom');
+const { Provider } = require('react-redux');
+const Store = require('../app/store');
 const App = require('../app');
 
 ReactDOM.render(
   <AppContainer>
-    <BrowserRouter>
-      <App/>
-    </BrowserRouter>
+    <Provider store={Store} >
+      <BrowserRouter>
+        <App/>
+      </BrowserRouter>
+      </Provider>
   </AppContainer>,
   document.getElementById('root')
 );

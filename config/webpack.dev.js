@@ -11,9 +11,6 @@ module.exports = {
       'webpack/hot/only-dev-server',
       './client/index.js'
     ],
-    vendor: [
-        'react', 'react-dom', 'react-router-dom', 'redux', 'react-redux', 'redux-thunk'
-    ],
   },
   module: {
     rules: [
