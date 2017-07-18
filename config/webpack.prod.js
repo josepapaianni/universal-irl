@@ -6,7 +6,7 @@ const webpack = require('webpack');
 module.exports = {
   entry: {
     vendor: [
-      'react', 'react-dom', 'react-router-dom', 'redux', 'react-redux', 'redux-thunk', 'react-hot-loader'
+      'react', 'react-dom', 'react-router-dom', 'redux', 'react-redux', 'redux-thunk'
     ],
     app: [
       './client/index.js'

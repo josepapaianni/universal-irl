@@ -17,6 +17,6 @@ const App = () => {
       </Switch>
     </main>
   );
-}
+};
 
 module.exports = App;

@@ -25,21 +25,25 @@ if (process.env.BROWSER) {
 const routes = [
   {
     path: '/',
+    chunkName: 'home',
     exact: true,
     render: (subroutes, props) => <AsyncRoute routes={subroutes} component={Home()} {...props} />,
     loadData: () => console.log('aalalala'),
   },
   {
     path: '/about',
+    chunkName: 'about',
     render: (subroutes, props) => <AsyncRoute routes={subroutes} component={About()} {...props} />,
     loadData: () => console.log('aalalala'),
   },
   {
     path: '/contact',
+    chunkName: 'contact',
     render: (subroutes, props) => <AsyncRoute routes={subroutes} component={Contact()} {...props} />,
     routes: [
       {
         path: '/contact/me',
+        chunkName: 'me',
         render: (subroutes, props) => <AsyncRoute routes={subroutes} component={Me()} {...props} />,
         loadData: () => console.log('me')
       }

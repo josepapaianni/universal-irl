@@ -27,7 +27,6 @@ class AsyncRoute extends React.Component {
         });
       });
     }
-    // this.loading = false;
   }
 
   render(){

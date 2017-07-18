@@ -14,13 +14,13 @@ function getPossibleChunks(url) {
   routes.some(route => {
     const match = matchPath(url, route);
     if (match) {
-      chunks.push(route.path.match(/([^\/]*)\/*$/)[1]);
+      chunks.push(route.chunkName);
       let subRoutes = route.routes;
       while (subRoutes) {
         subRoutes.some(route => {
           const match = matchPath(url, route);
           if (match) {
-            chunks.push(route.path.match(/([^\/]*)\/*$/)[1]);
+            chunks.push(route.chunkName);
             subRoutes = route.routes;
           } else {
             subRoutes = null;
@@ -79,7 +79,7 @@ router.get('*', (req, res) => {
   const scriptTags = scripts.length > 0 ? `<script>window.addEventListener('load',function(){var s="${scripts}";if (s==='null'||s==='undefined')return;s=s.split(',');s.forEach(function(c){var t=document.createElement('script');t.src=c;t.async=false;t.defer=true;document.head.appendChild(t);})})</script>` : '';
   res.write(`
       <!doctype html>
-      <head>${scriptTags}</head>
+      <head><link rel="shortcut icon" href="https://http2.mlstatic.com/ui/navigation/1.6.11/mercadolibre/favicon.ico">${scriptTags}</head>
       <body>
         <main id="root">${app}</main>
       </body>`
