@@ -5,9 +5,6 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: {
-    vendor: [
-      'react', 'react-dom', 'react-router-dom', 'redux', 'react-redux', 'redux-thunk'
-    ],
     app: [
       './client/index.js'
     ],
@@ -30,7 +27,7 @@ module.exports = {
   },
   output: {
     path: resolve() + '/build/',
-    filename: '[name].js',
+    filename: '[name].[chunkhash].js',
     publicPath: '/'
   },
 
@@ -49,7 +46,14 @@ module.exports = {
       },
     }),
     new webpack.optimize.CommonsChunkPlugin({
-      name: ['vendor', 'manifest']
+      name: "vendor",
+      minChunks: function(module){
+        return module.context && module.context.indexOf("node_modules") !== -1;
+      }
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: "manifest",
+      minChunks: Infinity
     }),
     function getBuildStats() {
       this.plugin('done', (stats) => {
