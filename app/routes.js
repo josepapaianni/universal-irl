@@ -6,6 +6,10 @@ const AsyncRoute = require('./helpers/async-route');
 let Home, About, Contact, Me;
 
 if (process.env.BROWSER) {
+  // This strange way to declare the route's components is required
+  // because you need to resolve the dependency in a synchronous way to match
+  // the app rendered in the server with the app rendered in the client.
+  // You return a component instead of a promise if the chunk is already loaded
   Home = () => __webpack_modules__[require.resolveWeak('./Home')] ? __webpack_require__(require.resolveWeak('./Home')) :
     new Promise(resolve => require.ensure([], require => resolve(require('./Home')), null, 'home'));
   About = () => __webpack_modules__[require.resolveWeak('./About')] ? __webpack_require__(require.resolveWeak('./About')) :
@@ -34,7 +38,7 @@ const routes = [
     path: '/about',
     chunkName: 'about',
     render: (subroutes, props) => <AsyncRoute routes={subroutes} component={About()} {...props} />,
-    loadData: () => console.log('aalalala'),
+    loadData: () => new Promise((resolve, reject) => setTimeout(resolve, 4000))
   },
   {
     path: '/contact',

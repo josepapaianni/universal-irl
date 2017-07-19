@@ -46,7 +46,7 @@ function getAsyncTasks(url) {
       asyncTasks.push(route.loadData(match));
     }
   });
-  return asyncTasks.length > 0 ? asyncTasks : null;
+  return asyncTasks;
 }
 
 
@@ -65,6 +65,16 @@ function getScripts(requestChunks, staticAssets){
   return scripts;
 }
 
+function getScriptsTags(scripts){
+  if (scripts.length <= 0) {
+    return '';
+  } else {
+    // A small script to load scripts after DOM content load (maximize ssr speed)
+    //  @param scripts {array}
+    return `<script>window.addEventListener('load',function(){var a='${scripts}';'null'==a||'undefined'==a||(a=a.split(','),a.forEach(function(b){var d=document.createElement('script');d.src=b,d.async=!1,d.defer=!0,document.head.appendChild(d)}))});</script>`
+  }
+}
+
 router.get('*', (req, res) => {
   const context = {};
   const requestChunks = getPossibleChunks(req.url);
@@ -72,20 +82,20 @@ router.get('*', (req, res) => {
   const scripts = getScripts(requestChunks, res.staticAssets).map(src => res.staticPath + src);
   const store = createStore(reducers, []);
 
-  const app = ReactDOMServer.renderToString(
-    <Provider store={store}>
-      <StaticRouter location={req.url} context={context}>
-        <App/>
-      </StaticRouter>
-    </Provider>
-  );
+  Promise.all(asyncTasks)
+    .then(data => {
+      const app = ReactDOMServer.renderToString(
+        <Provider store={store}>
+          <StaticRouter location={req.url} context={context}>
+            <App/>
+          </StaticRouter>
+        </Provider>
+      );
 
-  const preloadedState = store.getState();
+      const preloadedState = store.getState();
 
-  // A small script to load scripts after DOM content load (maximize ssr speed)
-  //  @param scripts {array}
-  const scriptTags = scripts.length > 0 ? `<script>window.addEventListener('load',function(){var s="${scripts}";if (s==='null'||s==='undefined')return;s=s.split(',');s.forEach(function(c){var t=document.createElement('script');t.src=c;t.async=false;t.defer=true;document.head.appendChild(t);})})</script>` : '';
-  res.write(`
+      const scriptTags = getScriptsTags(scripts);
+      res.write(`
       <!doctype html>
       <head>
         <script>window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '\\u003c')}</script>
@@ -93,9 +103,11 @@ router.get('*', (req, res) => {
       <body>
         <main id="root">${app}</main>
       </body>`
-  );
+      );
 
-  res.end();
+      res.end();
+
+    });
 
 });
 
