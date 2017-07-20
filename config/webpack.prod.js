@@ -7,7 +7,7 @@ module.exports = {
   entry: {
     app: [
       './client/index.js'
-    ],
+    ]
   },
   module: {
     rules: [

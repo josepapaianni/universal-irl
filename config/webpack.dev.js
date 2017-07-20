@@ -2,6 +2,17 @@ const { name } = require('../package.json');
 const { resolve } = require('path');
 const webpack = require('webpack');
 
+// function isSwDependency(module){
+//   let find = false;
+//   for (let item of module._chunks.values()){
+//     if (item.name === 'sw') {
+//       find = true;
+//       break;
+//     }
+//   }
+//   return find;
+// }
+
 module.exports = {
   devtool: 'cheap-module-eval-source-map',
   entry: {
@@ -10,7 +21,7 @@ module.exports = {
       'webpack-hot-middleware/client?path=http://localhost:8080/__webpack_hmr&overlay=false',
       'webpack/hot/only-dev-server',
       './client/index.js'
-    ],
+    ]
   },
   module: {
     rules: [
@@ -53,12 +64,12 @@ module.exports = {
     new webpack.optimize.CommonsChunkPlugin({
         name: "vendor",
         minChunks: function(module){
-            return module.context && module.context.indexOf("node_modules") !== -1;
+          return module.context && module.context.indexOf("node_modules") !== -1;
         }
     }),
     new webpack.optimize.CommonsChunkPlugin({
         name: "manifest",
-        minChunks: Infinity
-    }),
+        minChunks: 2
+    })
   ]
 };

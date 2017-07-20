@@ -14,6 +14,7 @@ const chokidar = require('chokidar');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpackConfig = require('./config/webpack.dev');
+const webpackSWConfig = require('./config/webpack.sw.dev');
 const server = require('./server');
 
 
@@ -32,11 +33,17 @@ class ServerApp {
     development() {
         this.httpApp = express();
         const compiler = webpack(webpackConfig);
+        const compilerSW = webpack(webpackSWConfig);
 
         this.httpApp.use(webpackDevMiddleware(compiler, {
             noInfo: false,
             publicPath: webpackConfig.output.publicPath,
             serverSideRender: true,
+        }));
+
+        this.httpApp.use(webpackDevMiddleware(compilerSW, {
+            noInfo: false,
+            publicPath: webpackConfig.output.publicPath,
         }));
 
         this.httpApp.use(webpackHotMiddleware(compiler));

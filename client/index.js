@@ -17,6 +17,11 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
+//Test SW
+navigator.serviceWorker.register('/sw.js').then((registration) => {
+  console.log('service worker ok!')
+});
+
 // Hot Module Replacement API
 if (module.hot) {
   module.hot.accept('../app', () => {
