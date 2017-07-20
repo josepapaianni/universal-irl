@@ -2,17 +2,6 @@ const { name } = require('../package.json');
 const { resolve } = require('path');
 const webpack = require('webpack');
 
-// function isSwDependency(module){
-//   let find = false;
-//   for (let item of module._chunks.values()){
-//     if (item.name === 'sw') {
-//       find = true;
-//       break;
-//     }
-//   }
-//   return find;
-// }
-
 module.exports = {
   devtool: 'cheap-module-eval-source-map',
   entry: {
@@ -69,7 +58,7 @@ module.exports = {
     }),
     new webpack.optimize.CommonsChunkPlugin({
         name: "manifest",
-        minChunks: 2
+        minChunks: Infinity
     })
   ]
 };
