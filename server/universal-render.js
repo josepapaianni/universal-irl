@@ -99,7 +99,7 @@ router.get('*', (req, res) => {
       <!doctype html>
       <head>
         <script>window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '\\u003c')}</script>
-        <link rel="shortcut icon" href="https://http2.mlstatic.com/ui/navigation/1.6.11/mercadolibre/favicon.ico">${scriptTags}</head>
+        <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-128.png">${scriptTags}</head>
       <body>
         <main id="root">${app}</main>
       </body>`
