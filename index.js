@@ -73,22 +73,16 @@ class ServerApp {
 
     production() {
         this.httpApp = express();
-        this.httpsApp = express();
-        const credentials = {
-            key: fs.readFileSync('./config/ssl/server.key', 'utf8'),
-            cert: fs.readFileSync('./config/ssl/server.crt', 'utf8')
-        };
-        this.httpsApp.use(express.static('./build'));
+        this.httpApp.use(express.static('./build'));
         const staticsMapping = this.normalizeAssets(require('./build/stats.json').assetsByChunkName);
-        this.httpsApp.use((req, res, next) => {
+        this.httpApp.use((req, res, next) => {
             res.staticAssets = staticsMapping;
             res.staticPath = webpackConfig.output.publicPath;
             next();
         });
-        this.httpsApp.use(server);
+        this.httpApp.use(server);
 
         this.httpServer = http.createServer(this.httpApp);
-        this.httpsServer = https.createServer(credentials, this.httpsApp);
     }
 
     normalizeAssets(assets){
