@@ -75,10 +75,12 @@ function getScriptsTags(scripts){
   }
 }
 
+
 router.get('*', (req, res) => {
   const context = {};
-  const requestChunks = getPossibleChunks(req.url);
-  const asyncTasks = getAsyncTasks(req.url);
+  const requestChunks = getPossibleChunks(req.path);
+  const isOffline = req.query.offline === 'true';
+  const asyncTasks = getAsyncTasks(req.path);
   const scripts = getScripts(requestChunks, res.staticAssets).map(src => res.staticPath + src);
   const store = createStore(reducers, []);
 
@@ -96,17 +98,15 @@ router.get('*', (req, res) => {
 
       const scriptTags = getScriptsTags(scripts);
       res.write(`
-      <!doctype html>
-      <head>
-        <script>window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '\\u003c')}</script>
-        <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-128.png">${scriptTags}</head>
-      <body>
-        <main id="root">${app}</main>
-      </body>`
+        <!doctype html>
+        <head>
+          <script>window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '\\u003c')}</script>
+          <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-128.png">${scriptTags}</head>
+        <body>
+          <main id="root">${isOffline ? '' : app}</main>
+        </body>`
       );
-
       res.end();
-
     });
 
 });
