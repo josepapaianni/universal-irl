@@ -4,7 +4,7 @@ const routes = require('./routes');
 
 const App = () => {
   return(
-    <main>
+    <div>
       <nav>
         <ul>
           <li><Link to="/">Home</Link></li>
@@ -15,7 +15,7 @@ const App = () => {
       <Switch>
         {routes.map(route => <Route key={route.path} path={route.path} exact={route.exact} render={route.render.bind(null, route.routes)} />)}
       </Switch>
-    </main>
+    </div>
   );
 };
 

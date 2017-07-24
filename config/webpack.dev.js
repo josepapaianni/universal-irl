@@ -34,6 +34,13 @@ module.exports = {
           { loader: 'css-loader?modules&localIdentName=[path][name]-[local]' },
         ],
       },
+      {
+        test: /\.(png|svg|gif|jpg)$/,
+        exclude: /node_modules/,
+        use: [
+          { loader: 'file-loader' },
+        ],
+      },
     ]
   },
   output: {
