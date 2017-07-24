@@ -26,3 +26,4 @@ http://localhost:8080
 - Data fetch before rendering
 - Client-side hot reloading
 - Server-side hot reloading
+- Service Worker
