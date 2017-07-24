@@ -1,6 +1,6 @@
 const express = require('express');
 const React = require('react');
-const { createStore, compose, applyMiddleware } = require('redux');
+const { createStore } = require('redux');
 const { Provider } = require('react-redux');
 const routes = require('../app/routes');
 const ReactDOMServer = require('react-dom/server');

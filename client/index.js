@@ -18,7 +18,7 @@ ReactDOM.render(
 );
 
 //Test SW
-navigator.serviceWorker.register('/sw.js').then((registration) => {
+navigator.serviceWorker.register('/sw.js').then(() => {
   console.log('service worker ok!')
 });
 

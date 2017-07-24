@@ -16,7 +16,7 @@ toolbox.router.get('/about', routeHandler);
 toolbox.router.get('/contact', routeHandler);
 toolbox.router.get('/contact/me', routeHandler);
 
-function routeHandler (request, values, options) {
+function routeHandler (request) {
   // toolbox.cache(`${request.url}?offline=true`);
   // toolbox.cache('https://api.mercadolibre.com/sites/MEC');
   fetch('/?offline=true')

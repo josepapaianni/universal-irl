@@ -21,7 +21,7 @@ class AsyncRoute extends React.Component {
   resolveModule(){
     this.loading = true;
     if(typeof window !== 'undefined'){
-      this.props.component.then((component) => {
+      this.props.component.then(component => {
         this.setState({
           component: component
         });

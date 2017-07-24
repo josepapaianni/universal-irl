@@ -2,8 +2,7 @@ const React = require('react');
 const { Switch, Route, Link } = require('react-router-dom');
 const routes = require('./routes');
 
-const App = () => {
-  return(
+const App = () => (
     <div>
       <nav>
         <ul>
@@ -17,6 +16,5 @@ const App = () => {
       </Switch>
     </div>
   );
-};
 
 module.exports = App;

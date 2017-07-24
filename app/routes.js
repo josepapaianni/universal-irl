@@ -38,7 +38,7 @@ const routes = [
     path: '/about',
     chunkName: 'about',
     render: (subroutes, props) => <AsyncRoute routes={subroutes} component={About()} {...props} />,
-    loadData: () => new Promise((resolve, reject) => setTimeout(resolve, 4000))
+    loadData: () => new Promise(resolve => setTimeout(resolve, 4000))
   },
   {
     path: '/contact',

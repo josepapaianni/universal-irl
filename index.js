@@ -99,7 +99,6 @@ class ServerApp {
         }, {});
     }
 
-
     listen() {
         this.httpServer.listen(8080, () => console.log(`listening @${8080}`));
         this.httpsServer ? this.httpsServer.listen(8443, () => console.log(`listening @${8443}`)) : null;

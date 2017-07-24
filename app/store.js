@@ -11,7 +11,6 @@ isBrowser && window.__PRELOADED_STATE__ ? delete window.__PRELOADED_STATE__ : nu
 const composeEnhancers = isBrowser && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : compose;
 
 const Store = createStore(reducers, preloadedState,
-  composeEnhancers(applyMiddleware(thunk)),
-);
+  composeEnhancers(applyMiddleware(thunk)));
 
 module.exports = Store;
