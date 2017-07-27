@@ -17,10 +17,15 @@ toolbox.router.get('/contact', routeHandler);
 toolbox.router.get('/contact/me', routeHandler);
 
 function routeHandler (request) {
-  // toolbox.cache(`${request.url}?offline=true`);
+  // toolbox.cache('/?offline=true');
   // toolbox.cache('https://api.mercadolibre.com/sites/MEC');
-  fetch('/?offline=true')
-    .then(response => caches.open(CACHE_NAME).then(cache => cache.put(HTML_FRAME, response)));
+  //
+  isInCache(HTML_FRAME)
+    .catch(() => {
+      fetch('/?offline=true')
+        .then(response => caches.open(CACHE_NAME)
+        .then(cache => cache.put(HTML_FRAME, response)));
+    });
 
   return new Promise((resolve, reject) => {
     fetch(request.url)
@@ -31,4 +36,18 @@ function routeHandler (request) {
           .catch(reject);
       });
   })
+}
+
+function isInCache(request) {
+  return new Promise((resolve, reject) => {
+    caches.open(CACHE_NAME)
+      .then(cache => cache.match(request))
+      .then((cacheMatch) => {
+        if(cacheMatch === undefined){
+          reject();
+        } else {
+          resolve();
+        }
+      })
+  });
 }
