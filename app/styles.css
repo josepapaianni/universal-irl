@@ -1,0 +1,11 @@
+:global body {
+    margin: 0;
+}
+
+.header {
+    background-color: antiquewhite;
+}
+
+.header li {
+    display: inline;
+}

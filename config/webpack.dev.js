@@ -28,7 +28,6 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        exclude: /node_modules/,
         use: [
           { loader: 'style-loader' },
           { loader: 'css-loader?modules&localIdentName=[path][name]-[local]' },
@@ -36,9 +35,9 @@ module.exports = {
       },
       {
         test: /\.(png|svg|gif|jpg)$/,
-        exclude: /node_modules/,
         use: [
           { loader: 'file-loader' },
+          { loader: 'img-loader' }
         ],
       },
     ]
