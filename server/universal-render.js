@@ -54,12 +54,14 @@ function getAsyncTasks(url) {
 // for the requested url it will be available before
 // the main app chunk (or shell), this way the app rendered
 // on the server will sync with the client one
-function getScripts(requestChunks, staticAssets){
+function getScripts(requestChunks, staticAssets, isOffline){
   const scripts = [];
   staticAssets['manifest'] ? scripts.push(...staticAssets['manifest'].filter(file => file.endsWith('js'))) : null;
   staticAssets['vendor'] ? scripts.push(...staticAssets['vendor'].filter(file => file.endsWith('js'))) : null;
-  for(let i = 0; requestChunks && i < requestChunks.length;  i++) {
-    scripts.push(...staticAssets[requestChunks[i]].filter(file => file.endsWith('js')))
+  if (!isOffline){
+    for(let i = 0; requestChunks && i < requestChunks.length;  i++) {
+      scripts.push(...staticAssets[requestChunks[i]].filter(file => file.endsWith('js')))
+    }
   }
   staticAssets['app'] ? scripts.push(...staticAssets['app'].filter(file => file.endsWith('js'))) : null;
   return scripts;
@@ -81,9 +83,9 @@ router.get('*', (req, res) => {
   const requestChunks = getPossibleChunks(req.path);
   const isOffline = req.query.offline === 'true';
   const asyncTasks = getAsyncTasks(req.path);
-  const scripts = getScripts(requestChunks, res.staticAssets).map(src => res.staticPath + src);
+  const scripts = getScripts(requestChunks, res.staticAssets, isOffline).map(src => res.staticPath + src);
   const store = createStore(reducers, []);
-
+  console.log('offline: ', isOffline);
   Promise.all(asyncTasks)
     .then(data => {
       const app = ReactDOMServer.renderToString(
@@ -100,7 +102,7 @@ router.get('*', (req, res) => {
       res.write(`
         <!doctype html>
         <head>
-          <script>window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '\\u003c')}</script>
+          ${isOffline ? '' : `<script>window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '\\u003c')}</script>`}
           <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-128.png">
           ${scriptTags}
         </head>
