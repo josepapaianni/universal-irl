@@ -1,9 +1,10 @@
+const isDevelop = process.env.NODE_ENV === 'development';
+
 require('babel-register')({
     ignore: ['node_modules'],
 });
-
 require('css-modules-require-hook')({
-    generateScopedName: '[path][name]-[local]'
+    generateScopedName: isDevelop ? '[path][name]-[local]' : '[hash:base64:4]'
 });
 
 const http = require('http');
@@ -21,8 +22,7 @@ const server = require('./server');
 class ServerApp {
 
     constructor() {
-        const env = process.env.NODE_ENV || 'production';
-        if (env === 'development') {
+        if (isDevelop) {
             this.development();
         } else {
             this.production();
