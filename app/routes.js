@@ -32,7 +32,7 @@ const routes = [
     chunkName: 'home',
     exact: true,
     render: (subroutes, props) => <AsyncRoute routes={subroutes} component={Home()} {...props} />,
-    loadData: () => console.log('aalalala'),
+    loadData: () => new Promise(resolve => setTimeout(resolve, 500)),
   },
   {
     path: '/about',
@@ -49,7 +49,7 @@ const routes = [
         path: '/contact/me',
         chunkName: 'me',
         render: (subroutes, props) => <AsyncRoute routes={subroutes} component={Me()} {...props} />,
-        loadData: () => console.log('me')
+        loadData: () => new Promise(resolve => setTimeout(resolve, 200))
       }
     ]
   },

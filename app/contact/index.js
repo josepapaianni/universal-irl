@@ -7,7 +7,7 @@ class Contact extends React.Component {
       <div>
         <h3>soy coasdasdntact</h3>
         <ul>
-          <li><Link to="/contact/me">Measdasdasdasdsadas</Link></li>
+          <li><Link to="/contact/me">I'm Contact!</Link></li>
         </ul>
         {this.props.routes.map(route => <Route key={route.path} {...route}/>)}
       </div>
