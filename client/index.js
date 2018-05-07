@@ -6,7 +6,7 @@ const { Provider } = require('react-redux');
 const Store = require('../app/store');
 const App = require('../app');
 
-ReactDOM.render(
+ReactDOM.hydrate(
   <AppContainer>
     <Provider store={Store} >
       <BrowserRouter>
@@ -26,7 +26,7 @@ navigator.serviceWorker.register('/sw.js').then(() => {
 if (module.hot) {
   module.hot.accept('../app', () => {
     const NextApp = require('../app');
-    ReactDOM.render(
+    ReactDOM.hydrate(
       <AppContainer>
         <BrowserRouter>
           <NextApp/>

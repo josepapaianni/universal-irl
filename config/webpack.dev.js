@@ -3,10 +3,10 @@ const { resolve } = require('path');
 const webpack = require('webpack');
 
 module.exports = {
+  mode: 'development',
   devtool: 'cheap-module-eval-source-map',
   entry: {
     app: [
-      'react-hot-loader/patch',
       'webpack-hot-middleware/client?path=http://localhost:8080/__webpack_hmr&overlay=false',
       'webpack/hot/only-dev-server',
       './client/index.js'
@@ -42,6 +42,20 @@ module.exports = {
       },
     ]
   },
+  optimization: {
+    runtimeChunk: 'single',
+    splitChunks: {
+      chunks: 'all',
+      name: true,
+      cacheGroups: {
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          priority: -10
+        },
+      },
+    },
+  },
   output: {
     path: resolve() + '/public/',
     filename: '[name].js',
@@ -55,16 +69,6 @@ module.exports = {
         BROWSER: true,
       }
     }),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.optimize.CommonsChunkPlugin({
-        name: "vendor",
-        minChunks: function(module){
-          return module.context && module.context.indexOf("node_modules") !== -1;
-        }
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-        name: "manifest",
-        minChunks: Infinity
-    })
+    new webpack.HotModuleReplacementPlugin()
   ]
 };

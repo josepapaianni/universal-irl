@@ -1,9 +1,9 @@
 const { name } = require('../package.json');
 const { resolve } = require('path');
-const fs = require('fs');
 const webpack = require('webpack');
 
 module.exports = {
+  mode: 'production',
   entry: {
     app: [
       './client/index.js'
@@ -27,13 +27,34 @@ module.exports = {
         test: /\.css$/,
         use: [
           { loader: 'style-loader' },
-          { loader: 'css-loader?modules&localIdentName=[hash:base64:4]' },
+          { loader: 'css-loader?modules&localIdentName=[path][name]-[local]' },
+        ],
+      },
+      {
+        test: /\.(png|svg|gif|jpg)$/,
+        use: [
+          { loader: 'file-loader' },
+          { loader: 'img-loader' }
         ],
       },
     ]
   },
+  optimization: {
+    runtimeChunk: 'single',
+    splitChunks: {
+      chunks: 'all',
+      name: true,
+      cacheGroups: {
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          priority: -10
+        },
+      },
+    },
+  },
   output: {
-    path: resolve() + '/build/',
+    path: resolve() + '/build',
     filename: '[name].[chunkhash].js',
     publicPath: '/'
   },
@@ -45,28 +66,5 @@ module.exports = {
         BROWSER: true,
       }
     }),
-    new webpack.optimize.ModuleConcatenationPlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false,
-      },
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: "vendor",
-      minChunks: function(module){
-        return module.context && module.context.indexOf("node_modules") !== -1;
-      }
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: "manifest",
-      minChunks: Infinity
-    }),
-    function getBuildStats() {
-      this.plugin('done', (stats) => {
-        const assets = JSON.stringify({assetsByChunkName: stats.toJson().assetsByChunkName, entrypoints: stats.toJson().entrypoints});
-        fs.writeFileSync(`${resolve()}/build/stats.json`, assets)
-      });
-    },
   ]
 };

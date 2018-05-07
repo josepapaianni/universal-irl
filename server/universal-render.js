@@ -56,7 +56,7 @@ function getAsyncTasks(url) {
 // on the server will sync with the client one
 function getScripts(requestChunks, staticAssets, isOffline){
   const scripts = [];
-  staticAssets['manifest'] ? scripts.push(...staticAssets['manifest'].filter(file => file.endsWith('js'))) : null;
+  staticAssets['runtime'] ? scripts.push(...staticAssets['runtime'].filter(file => file.endsWith('js'))) : null;
   staticAssets['vendor'] ? scripts.push(...staticAssets['vendor'].filter(file => file.endsWith('js'))) : null;
   if (!isOffline){
     for(let i = 0; requestChunks && i < requestChunks.length;  i++) {
@@ -97,6 +97,7 @@ router.get('*', (req, res) => {
       );
 
       const preloadedState = store.getState();
+
 
       const scriptTags = getScriptsTags(scripts);
       res.write(`
